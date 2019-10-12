@@ -1,167 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<title>Iteration 1</title>
 	<style>
-		.page {
-			position:absolute;
-			min-height: 100%;
-			width:100%;
-		}
-		
-		#page_login {
-		}
-		#header {
-			color:#fff;
+		header {
 			padding: 156px;
 		}
-		
-		#page_notes {
-			background:#dca;
-			display:none;
-		}
-		#notepanel {
-			display:flex;
-			width:60%;
-			margin:70px auto 20px;
-			justify-content:flex-start;
-			align-items:flex-start;
-			flex-wrap: wrap;
-		}
-		#notebox_template {
-			display:none;
-		}
-		.noteframe {
-			width: 23%;
-			margin:1%;
-		}
-		.notebox {
-			position:relative;
-			padding:10px 15px;
-			border:2px solid #dcb;
-			border-radius: .5rem;
-			background:#fff;
-			box-shadow: 10px 10px 5px rgba(0, 0, 0, .2);
-		}
-		.note_title {
-			font-weight:bold;
-			font-size:20px;
-		}
-		.note_time {
-			color:#777;
-			font-size:12px;
-			padding:5px 0 5px;
-			border-bottom: 1px #aaa dashed;
-		}
-		.note_content {
-			font-size:14px;
-			padding-top:8px;
-		}
-		.note_content p {
-			margin:0;
-		}
+
 	</style>
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 		<div class="container">
 			<a class="navbar-brand" style="color: white">Hello World Software Team</a>
-			<a class="btn btn-primary" href="https://github.com/HelloWorldKSU/Reminder-App">Organization GitHub Page   <span><img src ="../assets/GitHub-Mark-32px.png"></span></a>
+			<a class="btn btn-primary" href="https://github.com/HelloWorldKSU/Reminder-App">Organization GitHub Page   <span><img src ="https://raw.githubusercontent.com/HelloWorldKSU/Reminder-App/master/mysite/assets/GitHub-Mark-32px.png"></span></a>
 		</div>
 	</nav>
-	<div id="page_login" class="page bg-primary">
-		<div id="header">
+	<header class="bg-primary text-white">
+		<div class="container text-center">
 			<div class="container text-center">
-				<div class="container text-center">
-					<img src="../assets/helloworld.png" alt="helloworld">
-				</div>
-				<br/>
-				<br/>
-				<h1>Welcome to the Hello World Web App</h1>
-				<h3>An intuitive to do list to simplify your life</h3>
-				<br/>
-				<p>Coming soon!</p>
-				<br/>
+				<!--<img src="https://www.pythonanywhere.com/user/helloworldksu/files/home/helloworldksu/mysite/assets/helloworld.png" alt="helloworld">-->
+				<img src="https://raw.githubusercontent.com/HelloWorldKSU/Reminder-App/master/mysite/assets/helloworld.png" alt="helloworld">
 			</div>
-			<div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-			  <form id="signup" action="/getEmail" method ="POST">
-				<div class="form-row">
-				  <div class="col-12 col-md-9 mb-2 mb-md-0">
-					<input type="email" class="form-control form-control-lg" placeholder="Enter your email to stay updated..." name="email_text_box">
-				  </div>
-				  <div class="col-12 col-md-3">
-					<button type="submit" class="btn btn-block btn-lg btn-primary" style="background-color: #97bd30">Sign up!</button>
-				  </div>
-				</div>
-			  </form>
-			</div>
+			<br/>
+			<br/>
+			<h1>Welcome to the Hello World Web App</h1>
+			<h3>An intuitive to do list to simplify your life</h3>
+			<br/>
+			<p>Coming soon!</p>
+			<br/>
 		</div>
-	</div>
-	<div id="page_notes" class="page">
-		<div id="notepanel">
-			<div id="notebox_template" class="noteframe">
-				<div class="notebox">
-					<div class="note_title">Title</div>
-					<div class="note_time">Oct.5 2019</div>
-					<div class="note_content"></div>
-				</div>
-			</div>
-		</div>
-	</div>
+		<div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+          <form action="/getEmail" method ="POST">
+            <div class="form-row">
+              <div class="col-12 col-md-9 mb-2 mb-md-0">
+                <input type="email" class="form-control form-control-lg" placeholder="Enter your email to stay updated..." name="email_text_box">
+              </div>
+              <div class="col-12 col-md-3">
+                <button type="submit" class="btn btn-block btn-lg btn-primary" style="background-color: #97bd30">Sign up!</button>
+              </div>
+            </div>
+          </form>
+        </div>
+	</header>
 
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-<script>
-$(function()
-{
-});
-
-// ajax submission for sign-up form
-$("#signup").submit(function(e)
-{
-	e.preventDefault(); // prevent the default submission
-	var form = $(this);
-	var url = form.attr('action');
-	$.ajax({
-			type: "POST",
-			url: url,
-			data: form.serialize(),
-			success: function(data)
-			{
-				// not implemented
-			}
-	});
-	showNotes(); // debug
-});
-
-// go to note page
-function showNotes()
-{
-	$("#page_login").css("display", "none");
-	$("#page_notes").css("display", "block");
-	for (var i = 0; i < 15; i++)
-		setTimeout(function() {appendNote();}, i * 50);
-}
- 
- // append a note
-function appendNote()
-{
-	var note = $("#notebox_template").clone().appendTo("#notepanel");
-	note.find(".note_content").html("<p>something to do</p>".repeat(Math.ceil(Math.random() * 7)));
-	note.css("display", "block");
-	// move-in animation
-	note.find(".notebox").css(
-	{
-		top : "10px",
-		opacity : "0.3",
-	}).animate({
-		top : "0px",
-		opacity : "1",
-  }, 300);
-}
-</script>
 </body>
 </html>
