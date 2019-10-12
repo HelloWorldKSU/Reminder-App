@@ -14,3 +14,9 @@ git remote -v
 git push -u origin master
 git pull
 exit
+help
+ls
+cd mysite
+ls
+git help
+exit
