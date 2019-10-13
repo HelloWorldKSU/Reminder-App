@@ -1,0 +1,43 @@
+#page_notes {
+	background: #dca;
+}
+#notepanel {
+	display: flex;
+	width: 60%;
+	margin: 10px auto 20px;
+	justify-content: flex-start;
+	align-items: flex-start;
+	flex-wrap: wrap;
+}
+#notebox_template {
+	display: none;
+}
+.noteframe {
+	width: 23%;
+	margin: 1%;
+}
+.notebox {
+	position: relative;
+	padding: 10px 15px;
+	border: 2px solid #dcb;
+	border-radius: .5rem;
+	background: #fff;
+	box-shadow: 10px 10px 5px rgba(0, 0, 0, .2);
+}
+.note_title {
+	font-weight: bold;
+	font-size: 20px;
+}
+.note_time {
+	color: #777;
+	font-size: 12px;
+	padding: 5px 0 5px;
+	border-bottom: 1px #aaa dashed;
+}
+.note_content {
+	font-size: 14px;
+	padding-top: 8px;
+}
+.note_content p {
+	margin: 0;
+}
