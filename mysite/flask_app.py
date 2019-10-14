@@ -1,6 +1,10 @@
-
-from flask import Flask, render_template, redirect, request
+import os
+from flask import Flask, render_template, redirect, request, url_for
 from flask_sqlalchemy import SQLAlchemy
+from forms import LoginForm
+from flask_login import current_user, login_user, UserMixin
+from werkzeug.urls import url_parse
+
 
 app = Flask(__name__)
 
@@ -11,6 +15,7 @@ SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostnam
     hostname="helloworldksu.mysql.pythonanywhere-services.com",
     databasename="helloworldksu$note_app",
 )
+app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY', 'you-will-never-guess')
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -18,8 +23,8 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 #END NOTE_APP DB SETUP
 
-
-class User(db.Model):
+#db models
+class User(UserMixin, db.Model):
     __tablename__ = "user"
 
     user_id = db.Column(db.Integer, primary_key=True) #NOT NEEDED??
@@ -33,6 +38,7 @@ class User(db.Model):
         self.password = password_
         self.email = email_
 
+# routes
 @app.route('/')
 def serveIndexHtml():
     return render_template('index.html')
@@ -54,6 +60,30 @@ def createNewUserAccount():
     db.session.add(newUserAccountRecord)
     db.session.commit()
     return redirect('/')
+
+@app.route('/login', methods = ['GET', 'POST'])
+def login():
+    #if current_user.is_authenticated:
+    #    return redirect(url_for('index'))
+
+    form = LoginForm()
+    # true when the form is submitted, assuming all fields are valid
+    if form.validate_on_submit():
+        # returns user with username if it exists
+        user = User.query.filter_by(username = form.username.data).first()
+
+        if user is None or not user.check_password(form.password.data):
+            #flash('Invalid username or password')
+            return redirect(url_for('login'))
+
+        # from flask-login
+        login_user(user, remember = form.remember_me.data)
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('index')
+        return redirect(next_page)
+
+    return render_template('login_test.html', form = form)
 
 if __name__ == "__main__":
     app.run()
