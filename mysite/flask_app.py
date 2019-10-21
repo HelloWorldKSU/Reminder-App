@@ -1,19 +1,24 @@
 import os
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, request, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from forms import LoginForm
-from flask_login import current_user, login_user, UserMixin
-from werkzeug.urls import url_parse
+from flask_login import current_user, login_user, UserMixin, LoginManager
+#from werkzeug.urls import url_parse
 
 
 app = Flask(__name__)
+login = LoginManager(app)
 
 #THIS IS FOR THE NOTE_APP DB
-SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
-    username="helloworldksu",
-    password="cryptonomicon",
-    hostname="helloworldksu.mysql.pythonanywhere-services.com",
-    databasename="helloworldksu$note_app",
+SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{username}:{password}@{hostname}/{databasename}".format(
+    username="root",
+    password="root",
+    hostname="localhost",
+    databasename="reminder_app",
+    # username="helloworldksu",
+    # password="cryptonomicon",
+    # hostname="helloworldksu.mysql.pythonanywhere-services.com",
+    # databasename="helloworldksu$note_app",
 )
 app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY', 'you-will-never-guess')
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
@@ -27,16 +32,20 @@ db = SQLAlchemy(app)
 class User(UserMixin, db.Model):
     __tablename__ = "user"
 
-    user_id = db.Column(db.Integer, primary_key=True) #NOT NEEDED??
+    id = db.Column(db.Integer, primary_key=True) 
     username = db.Column(db.String(50))
     password = db.Column(db.String(50))
     email = db.Column(db.String(50))
 
     def __init__(self, username_, password_, email_):
-        self.user_id = None
+        self.id = None
         self.username = username_
         self.password = password_
         self.email = email_
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 # routes
 @app.route('/')
@@ -61,29 +70,22 @@ def createNewUserAccount():
     db.session.commit()
     return redirect('/')
 
-@app.route('/login', methods = ['GET', 'POST'])
-def login():
-    #if current_user.is_authenticated:
-    #    return redirect(url_for('index'))
+@app.route('/login_user')
+def serveLoginTestHtml():
+    return render_template('login_test.html')
 
-    form = LoginForm()
-    # true when the form is submitted, assuming all fields are valid
-    if form.validate_on_submit():
-        # returns user with username if it exists
-        user = User.query.filter_by(username = form.username.data).first()
+@app.route('/login', methods = ['POST'])
+def user_login():
+    username = request.form.get("auth_username_text_box")
+    password = request.form.get("auth_password_text_box")
 
-        if user is None or not user.check_password(form.password.data):
-            #flash('Invalid username or password')
-            return redirect(url_for('login'))
+    user = User.query.filter_by(username = username).first()
 
-        # from flask-login
-        login_user(user, remember = form.remember_me.data)
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('index')
-        return redirect(next_page)
+    if not user or user.password != password:
+        flash("ERROR")
+        return redirect('/login_user')
 
-    return render_template('login_test.html', form = form)
+    return redirect('/')
 
 if __name__ == "__main__":
     app.run()
