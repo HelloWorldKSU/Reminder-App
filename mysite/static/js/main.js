@@ -1,6 +1,6 @@
 $(function()
 {
-	load(".\\_ajaxframes\\home.html");	// load home page
+	load("..\\static\\_ajaxframes\\home.html");	// load home page
 });
 
 // load a page into #pagebox

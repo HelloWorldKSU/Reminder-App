@@ -70,22 +70,29 @@ def createNewUserAccount():
     db.session.commit()
     return redirect('/')
 
-@app.route('/login_user')
-def serveLoginTestHtml():
-    return render_template('login_test.html')
+@app.route('/login', methods = ['GET', 'POST'])
+def login():
+    #if current_user.is_authenticated:
+    #    return redirect(url_for('index'))
 
-@app.route('/login', methods = ['POST'])
-def user_login():
-    username = request.form.get("auth_username_text_box")
-    password = request.form.get("auth_password_text_box")
+    form = LoginForm()
+    # true when the form is submitted, assuming all fields are valid
+    if form.validate_on_submit():
+        # returns user with username if it exists
+        user = User.query.filter_by(username = form.username.data).first()
 
-    user = User.query.filter_by(username = username).first()
+        if user is None or not user.check_password(form.password.data):
+            #flash('Invalid username or password')
+            return redirect(url_for('login'))
 
-    if not user or user.password != password:
-        flash("ERROR")
-        return redirect('/login_user')
+        # from flask-login
+        login_user(user, remember = form.remember_me.data)
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('index')
+        return redirect(next_page)
 
-    return redirect('/')
+    return render_template('login_test.html', form = form)
 
 if __name__ == "__main__":
     app.run()

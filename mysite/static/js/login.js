@@ -18,5 +18,5 @@ $("#form_login").submit(function(e)
 				alert("post success!");
 			}
 	});
-	load(".\\_ajaxframes\\notes.html");	// debug
+	load("..\\static\\_ajaxframes\\notes.html");	// debug
 });
