@@ -11,8 +11,10 @@ function load(url)
 			url: url,
 			success: function(response)
 			{
-				$("#pagebox").html($("body", response).html());
-				$("head").append($("head", response).html());
+				
+				// $("#pagebox").html($("body", "Hello world").html());
+				$("#pagebox").html(response);
+				//$("head").append($("head", response).html());
 			},
 			error: function (jqXHR, exception)
 			{
