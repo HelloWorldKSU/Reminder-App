@@ -21,7 +21,7 @@ $("#form_signup").submit(function(e)
 			{
 				// not implemented
 				alert("post success!");
-				//load(".\\_ajaxframes\\notes.html");
+				//loadFrame("notes");
 			}
 	});
 });

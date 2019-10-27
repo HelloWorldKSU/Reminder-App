@@ -1,24 +1,31 @@
 $(function()
 {
-	load("..\\static\\_ajaxframes\\home.html");	// load home page
+	loadFrame("home");	// load home page
 });
 
 // load a page into #pagebox
-function load(url)
+function load(urlPage, urlCSS, urlJS)
 {
 	$.ajax({
 			type: "GET",
-			url: url,
+			url: urlPage,
 			success: function(response)
 			{
-				
-				// $("#pagebox").html($("body", "Hello world").html());
-				$("#pagebox").html(response);
-				//$("head").append($("head", response).html());
+				console.log(response);
+				console.log($(response));
+				$("#frame_css").attr("href", urlCSS);
+				$("#pagebox").html($(response));
+				$.getScript(urlJS);
 			},
 			error: function (jqXHR, exception)
 			{
 				alert("[ajax error] " + jqXHR.status + " " + exception);
 			},
 	});
+}
+
+// load a frame with name
+function loadFrame(name)
+{
+	load("..\\static\\_ajaxframes\\" + name + ".html", "..\\static\\css\\" + name + ".css", "..\\static\\js\\" + name + ".js");
 }

@@ -4,10 +4,10 @@ $(function()
  
 $("#btn_signup").click(function()
 {
-	load("..\\static\\_ajaxframes\\signup.html"); // debug
+	loadFrame("signup");
 });
 
 $("#btn_login").click(function()
 {
-	load("..\\static\\_ajaxframes\\login.html"); // debug
+	loadFrame("login");
 });
