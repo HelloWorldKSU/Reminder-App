@@ -14,9 +14,15 @@ $("#form_login").submit(function(e)
 			data: form.serialize(),
 			success: function(response)
 			{
-				// not implemented
-				alert("post success!");
+				if (!response.success)
+				{
+					alert('Login failed!');
+				}
+				else
+				{
+					auth_user_id = response.user_id;
+					loadFrame("notes");
+				}
 			}
 	});
-	loadFrame("notes");	// debug
 });

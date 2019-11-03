@@ -1,6 +1,7 @@
 import os
-from flask import Flask, render_template, redirect, request, url_for, flash
+from flask import Flask, render_template, redirect, request, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import exc
 from forms import LoginForm
 from flask_login import current_user, login_user, UserMixin, LoginManager
 import pymysql
@@ -14,7 +15,7 @@ login = LoginManager(app)
 #THIS IS FOR THE NOTE_APP DB
 SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{username}:{password}@{hostname}/{databasename}".format(
     username="root",
-    password="root",
+    password="",
     hostname="localhost",
     databasename="reminder_app",
     # username="helloworldksu",
@@ -34,7 +35,7 @@ db = SQLAlchemy(app)
 class User(UserMixin, db.Model):
     __tablename__ = "user"
 
-    id = db.Column(db.Integer, primary_key=True) 
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50))
     password = db.Column(db.String(50))
     email = db.Column(db.String(50))
@@ -45,34 +46,84 @@ class User(UserMixin, db.Model):
         self.password = password_
         self.email = email_
 
+class Note(db.Model):
+    __tablename__ = "note"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id  = db.Column(db.Integer)
+    title = db.Column(db.String(50))
+    date_due_d = db.Column(db.Date)
+    date_due_t = db.Column(db.Time)
+    date_created_d = db.Column(db.Date)
+    date_created_t = db.Column(db.Time)
+    date_modified_d = db.Column(db.Date)
+    date_modified_t = db.Column(db.Time)
+    content  = db.Column(db.String(1000))
+
+    def __init__(self, username_, password_, email_):
+        self.id = None
+        self.username = username_
+        self.password = password_
+        self.email = email_
+    
+    @property
+    def serialize(self):
+       return {
+           'id' : self.id,
+           'user_id' : self.user_id,
+           'title' : self.title,
+           'content' : self.content
+       }
+    @property
+    def serialize_many2many(self):
+       return [item.serialize for item in self.many2many]
+
 @app.route('/')
 def serveIndexHtml():
     return render_template('index.html')
 
 #CREATE NEW USER POST METHOD
 @app.route('/createNewUser', methods=['POST'])
-def createNewUserAccount():
+def route_createNewUser():
     username_ = request.form['username_text_box']
     email_ = request.form['email_text_box']
     password_ = request.form['password_text_box']
     newUserAccountRecord = User(username_, password_, email_)
     db.session.add(newUserAccountRecord)
-    db.session.commit()
-    return redirect('/')
+    try:
+        db.session.commit()
+    except exc.SQLAlchemyError as e:
+        db.session().rollback()
+        return jsonify(success=False)
+    return _login(username_, password_)
 
 #LOGIN METHOD
 @app.route('/login', methods = ['POST'])
-def user_login():
+def route_login():
     username = request.form.get("auth_username_text_box")
     password = request.form.get("auth_password_text_box")
+    return _login(username, password)
 
+#login
+def _login(username, password):
     user = User.query.filter_by(username = username).first()
-
     if not user or user.password != password:
-        flash("ERROR")
-        return redirect('/login_user')
+        return jsonify(success=False)
+    return jsonify(
+	    success=True,
+		user_id=user.id
+	)
 
-    return redirect('/')
+#NOTE METHOD
+@app.route('/note')
+def route_note():
+    user_id = request.args.get('user_id')
+    note = Note.query.filter_by(user_id = user_id)
+    return jsonify(
+	    success=True,
+		notes=[i.serialize for i in note.all()]
+	)
+
 if __name__ == "__main__":
     app.run(use_reloader=True)
 

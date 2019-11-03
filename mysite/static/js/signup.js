@@ -19,9 +19,15 @@ $("#form_signup").submit(function(e)
 			data: form.serialize(),
 			success: function(response)
 			{
-				// not implemented
-				alert("post success!");
-				//loadFrame("notes");
+				if (!response.success)
+				{
+					alert('Sign up failed!');
+				}
+				else
+				{
+					auth_user_id = response.user_id;
+					loadFrame("notes");
+				}
 			}
 	});
 });

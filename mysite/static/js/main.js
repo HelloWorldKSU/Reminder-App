@@ -1,3 +1,5 @@
+var auth_user_id = null;
+
 $(function()
 {
 	loadFrame("home");	// load home page
@@ -11,8 +13,6 @@ function load(urlPage, urlCSS, urlJS)
 			url: urlPage,
 			success: function(response)
 			{
-				console.log(response);
-				console.log($(response));
 				$("#frame_css").attr("href", urlCSS);
 				$("#pagebox").html($(response));
 				$.getScript(urlJS);
