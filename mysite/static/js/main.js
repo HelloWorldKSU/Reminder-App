@@ -3,6 +3,9 @@ var auth_user_id = null;
 $(function()
 {
 	loadFrame("home");	// load home page
+    // DEBUG : skip login
+    //auth_user_id = 1;
+    //loadFrame("notes");
 });
 
 // load a page into #pagebox

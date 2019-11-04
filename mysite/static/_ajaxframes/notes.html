@@ -1,5 +1,8 @@
 <div id="page_notes" class="page">
 	<div id="notepanel">
+		<div id="notebox_create" class="noteframe">
+			<div class="notebox notebox_create">New Note</div>
+		</div>
 		<div id="notebox_template" class="noteframe">
 			<div class="notebox">
 				<div class="note_title">Title</div>
@@ -8,4 +11,17 @@
 			</div>
 		</div>
 	</div>
+    <div id="editorbox">
+        <div id="editor">
+            <form id="form_createnote" action = "/createNote" method = "POST">
+                <div class="form_row editor_title">
+                    <input type="text" class="form-control" name="title" />
+                </div>
+                <div class="form_row editor_content">
+                    <textarea  type="text" class="form-control" name="content" />
+                </div>
+                <button type="submit" >Post</button>
+            </form>
+        </div>
+    </div>
 </div>

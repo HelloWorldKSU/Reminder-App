@@ -12,6 +12,8 @@
 #notebox_template {
 	display: none;
 }
+
+/* notes */
 .noteframe {
 	width: 23%;
 	margin: 1%;
@@ -40,4 +42,71 @@
 }
 .note_content p {
 	margin: 0;
+}
+
+/* new note clickable */
+#notebox_create {
+    align-self: stretch;
+}
+.notebox_create {
+	border: 2px dashed #000;
+	background: transparent;
+	height: 100%;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-weight: 600;
+    cursor: pointer;
+}
+.notebox_create:hover {
+	background: rgba(255, 255, 255, 0.5);
+}
+
+/* editor */
+#editorbox {
+	visibility: hidden;
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	background: rgba(0, 0, 0, 0.3);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+#editor {
+	width: 500px;
+	height: 600px;
+	border: 2px solid #dcb;
+	border-radius: .5rem;
+	background: #fff;
+	box-shadow: 10px 10px 5px rgba(0, 0, 0, .2);
+    padding: 15px;
+}
+#form_createnote {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+    height: 100%;
+}
+.editor_content {
+	height: 460px;
+}
+.editor_content textarea {
+    height: 100%;
+    resize: none;
+}
+#form_createnote button {
+	width: 150px;
+	height: 40px;
+	margin: 0 auto;
+	border: 1px solid #aaa;
+	border-radius: .5rem;
+	background: #fff;
+}
+#form_createnote button:hover {
+	border-color: #000;
+	background: #eee;
 }

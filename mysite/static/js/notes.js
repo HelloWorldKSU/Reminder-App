@@ -6,6 +6,26 @@ $(function()
     loadNotes();
 });
 
+function showEditor(b)
+{
+    if (b)
+        $("#editorbox").css("visibility", "visible");
+    else
+        $("#editorbox").css("visibility", "hidden");
+}
+
+$(".notebox_create").click(function()
+{
+    showEditor(true);
+});
+
+$("#editorbox").click(function(e)
+{
+    if (e.target !== this)
+        return;
+    showEditor(false);
+});
+
 // load notes
 function loadNotes()
 {
@@ -26,6 +46,7 @@ function loadNotes()
 				}
 				else
 				{
+                    $("#notebox_template").nextAll().remove();
                     notes = response.notes;
                     notesIndex = 0;
                     showNextNote();
@@ -68,8 +89,34 @@ function encodeNoteContent(content)
     var str = "";
     content.split("\n").forEach(function(s)
     {
-        console.log(s);
         str += "<p>" + s + "</p>";
     });
     return str;
 }
+
+// ajax submission
+$("#form_createnote").submit(function(e)
+{
+	e.preventDefault(); // prevent the default submission
+	var form = $(this);
+	var url = form.attr('action');
+	$.ajax({
+			type: "POST",
+			url: url,
+			data: form.serialize() + "&" + $.param({
+                user_id : auth_user_id
+            }),
+			success: function(response)
+			{
+				if (!response.success)
+				{
+					alert('Post failed!');
+				}
+				else
+				{
+                    showEditor(false);
+                    loadNotes();
+				}
+			}
+	});
+});

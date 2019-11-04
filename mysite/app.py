@@ -60,11 +60,11 @@ class Note(db.Model):
     date_modified_t = db.Column(db.Time)
     content  = db.Column(db.String(1000))
 
-    def __init__(self, username_, password_, email_):
+    def __init__(self, user_id_, title_, content_):
         self.id = None
-        self.username = username_
-        self.password = password_
-        self.email = email_
+        self.user_id = user_id_
+        self.title = title_
+        self.content = content_
     
     @property
     def serialize(self):
@@ -82,12 +82,12 @@ class Note(db.Model):
 def serveIndexHtml():
     return render_template('index.html')
 
-#CREATE NEW USER POST METHOD
+#route: create new user
 @app.route('/createNewUser', methods=['POST'])
 def route_createNewUser():
-    username_ = request.form['username_text_box']
-    email_ = request.form['email_text_box']
-    password_ = request.form['password_text_box']
+    username_ = request.form['username']
+    email_ = request.form['email']
+    password_ = request.form['password']
     newUserAccountRecord = User(username_, password_, email_)
     db.session.add(newUserAccountRecord)
     try:
@@ -97,11 +97,11 @@ def route_createNewUser():
         return jsonify(success=False)
     return _login(username_, password_)
 
-#LOGIN METHOD
+#route: login
 @app.route('/login', methods = ['POST'])
 def route_login():
-    username = request.form.get("auth_username_text_box")
-    password = request.form.get("auth_password_text_box")
+    username = request.form.get("username")
+    password = request.form.get("password")
     return _login(username, password)
 
 #login
@@ -114,7 +114,7 @@ def _login(username, password):
 		user_id=user.id
 	)
 
-#NOTE METHOD
+#route: get notes
 @app.route('/note')
 def route_note():
     user_id = request.args.get('user_id')
@@ -123,6 +123,21 @@ def route_note():
 	    success=True,
 		notes=[i.serialize for i in note.all()]
 	)
+
+#route: add note
+@app.route('/createNote', methods = ['POST'])
+def route_createNote():
+    title = request.form['title']
+    content = request.form['content']
+    user_id = request.form['user_id']
+    newNote = Note(user_id, title, content)
+    db.session.add(newNote)
+    try:
+        db.session.commit()
+    except exc.SQLAlchemyError as e:
+        db.session().rollback()
+        return jsonify(success=False)
+    return jsonify(success=True)
 
 if __name__ == "__main__":
     app.run(use_reloader=True)
