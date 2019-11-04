@@ -48,7 +48,7 @@ function loadNotes()
 				{
                     $("#notebox_template").nextAll().remove();
                     notes = response.notes;
-                    notesIndex = 0;
+                    notesIndex = notes.length - 1;
                     showNextNote();
 				}
 			}
@@ -58,19 +58,19 @@ function loadNotes()
 // show next note and delay
 function showNextNote()
 {
-    if (notes == null || notesIndex >= notes.length)
+    if (notes == null || notesIndex < 0)
         return;
     var note = notes[notesIndex];
-    notesIndex++;
-    appendNote(note.title, note.content);
+    notesIndex--;
+    createNotebox(note.title, note.content).appendTo("#notepanel");
     setTimeout(showNextNote, 50);
 }
  
- // append a note
-function appendNote(title, content)
+ // create a Notebox from template
+function createNotebox(title, content)
 {
-	var note = $("#notebox_template").clone().appendTo("#notepanel");
-	note.find(".note_title").html(title);
+	var note = $("#notebox_template").clone().removeAttr('id');;
+	note.find(".note_title").html(_.escape(title));
 	note.find(".note_content").html(encodeNoteContent(content));
 	note.css("display", "block");
 	// move-in animation
@@ -81,7 +81,8 @@ function appendNote(title, content)
 	}).animate({
 		top : "0px",
 		opacity : "1",
-  }, 300);
+    }, 300);
+    return note;
 }
 
 function encodeNoteContent(content)
@@ -89,7 +90,7 @@ function encodeNoteContent(content)
     var str = "";
     content.split("\n").forEach(function(s)
     {
-        str += "<p>" + s + "</p>";
+        str += "<p>" + _.escape(s) + "</p>";
     });
     return str;
 }
