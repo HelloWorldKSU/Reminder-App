@@ -8,7 +8,6 @@ import pymysql
 
 #from werkzeug.urls import url_parse
 
-
 app = Flask(__name__)
 login = LoginManager(app)
 
@@ -86,6 +85,20 @@ class Note(db.Model):
 def serveIndexHtml():
     return render_template('index.html')
 
+#route: debug (both GET and POST will work)
+@app.route('/debug', methods = ['GET', 'POST'])
+def route_debug():
+    if request.method == "POST":
+        _args = request.form
+    else:
+        _args = request.args
+    return jsonify(
+        success=True,
+        data="helloworld",
+        method=request.method,
+        arguments=_args
+    )
+
 #route: create new user
 @app.route('/createNewUser', methods=['POST'])
 def route_createNewUser():
@@ -114,9 +127,9 @@ def _login(username, password):
     if not user or user.password != password:
         return jsonify(success=False)
     return jsonify(
-	    success=True,
-		user_id=user.id
-	)
+        success=True,
+        user_id=user.id
+    )
 
 #route: get notes
 @app.route('/note')
@@ -124,9 +137,9 @@ def route_note():
     user_id = request.args.get('user_id')
     note = Note.query.filter_by(user_id = user_id)
     return jsonify(
-	    success=True,
-		notes=[i.serialize for i in note.all()]
-	)
+        success=True,
+        notes=[i.serialize for i in note.all()]
+    )
 
 #route: add note
 @app.route('/createNote', methods = ['POST'])
@@ -145,60 +158,3 @@ def route_createNote():
 
 if __name__ == "__main__":
     app.run(use_reloader=True)
-
-
-
-
-
-
-
-# @login.user_loader
-# def load_user(id):
-#     return User.query.get(int(id))
-
-# # routes
-# @app.route('/')
-# def serveIndexHtml():
-#     return render_template('index.html')
-
-# @app.route('/signup')
-# def serveCreateUserHtml():
-#     return render_template('create_user.html')
-
-# @app.route('/getEmail', methods = ['POST'])
-# def get_email():
-#     return redirect('/')
-
-# @app.route('/createNewUser', methods = ['POST'])
-# def createNewUserAccount():
-#     username_ = request.form['username_text_box']
-#     email_ = request.form['email_text_box']
-#     password_ = request.form['password_text_box']
-#     newUserAccountRecord = User(username_, password_, email_)
-#     db.session.add(newUserAccountRecord)
-#     db.session.commit()
-#     return redirect('/')
-
-# @app.route('/login', methods = ['GET', 'POST'])
-# def login():
-#     #if current_user.is_authenticated:
-#     #    return redirect(url_for('index'))
-
-#     form = LoginForm()
-#     # true when the form is submitted, assuming all fields are valid
-#     if form.validate_on_submit():
-#         # returns user with username if it exists
-#         user = User.query.filter_by(username = form.username.data).first()
-
-#         if user is None or not user.check_password(form.password.data):
-#             #flash('Invalid username or password')
-#             return redirect(url_for('login'))
-
-#         # from flask-login
-#         login_user(user, remember = form.remember_me.data)
-#         next_page = request.args.get('next')
-#         if not next_page or url_parse(next_page).netloc != '':
-#             next_page = url_for('index')
-#         return redirect(next_page)
-
-#     return render_template('login_test.html', form = form)
