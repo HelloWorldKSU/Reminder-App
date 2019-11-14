@@ -156,5 +156,48 @@ def route_createNote():
         return jsonify(success=False)
     return jsonify(success=True)
 
+@app.route('/deleteNote', methods = ['POST'])
+def route_removeNote():
+    user_id = request.form['user_id']
+    note_id = request.form['note_id']
+    note = Note.query.filter_by(id = note_id).delete()
+    try:
+        db.session.commit()
+    except exc.SQLAlchemyError as e:
+        db.session().rollback()
+        return jsonify(success=False)
+    return jsonify(success=True)
+
+# @app.route('/updateNote', methods = ['POST'])
+# def route_updateNote():
+#     title = request.form['title']
+#     content = request.form['content']
+#     user_id = request.form['user_id']
+#     note_id = request.form['note_id']
+#     newNote = Note(user_id, title, content)
+#     db.session.add(newNote)
+#     try:
+#         db.session.commit()
+#     except exc.SQLAlchemyError as e:
+#         db.session().rollback()
+#         return jsonify(success=False)
+#     return jsonify(success=True)
+
 if __name__ == "__main__":
     app.run(use_reloader=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
