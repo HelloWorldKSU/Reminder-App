@@ -1,27 +1,30 @@
 <div id="page_notes" class="page">
 	<div id="notepanel">
-		<div id="notebox_create" class="noteframe">
+		<div id="note_create" class="noteframe">
 			<div class="notebox notebox_create">New Note</div>
 		</div>
-		<div id="notebox_template" class="noteframe">
+		<div id="note_template" class="noteframe">
 			<div class="notebox">
 				<div class="note_title">Title</div>
 				<div class="note_time">Oct.5 2019</div>
 				<div class="note_content"></div>
 			</div>
+            <div class="noteactionbar">
+                <a class="note_edit">Edit</a>
+                <a class="note_delete">Delete</a>
+            </div>
 		</div>
 	</div>
     <div id="editorbox">
         <div id="editor">
-            <form id="form_createnote" action = "/createNote" method = "POST">
-                <div class="form_row editor_title">
-                    <input type="text" class="form-control" name="title" />
-                </div>
-                <div class="form_row editor_content">
-                    <textarea  type="text" class="form-control" name="content" />
-                </div>
-                <button type="submit" >Post</button>
-            </form>
+            <div class="form_row editor_title">
+                <input type="text" class="form-control" name="title" />
+            </div>
+            <div class="form_row editor_content">
+                <textarea  type="text" class="form-control" name="content" />
+            </div>
+            <button id="editorbtn_post" >Post</button>
+            <button id="editorbtn_save" >Save</button>
         </div>
     </div>
 </div>

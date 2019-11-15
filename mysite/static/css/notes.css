@@ -9,12 +9,13 @@
 	align-items: flex-start;
 	flex-wrap: wrap;
 }
-#notebox_template {
+#note_template {
 	display: none;
 }
 
 /* notes */
 .noteframe {
+	position: relative;
 	width: 23%;
 	margin: 1%;
 }
@@ -44,8 +45,33 @@
 	margin: 0;
 }
 
+/* action bar */
+.noteactionbar {
+	display: flex;
+	justify-content: space-around;
+	position: absolute;
+	width: 60%;
+	left: 20%;
+	height: 30px;
+	margin-top: -40px;
+	border-radius: .5rem;
+	border: 1px solid rgba(0, 0, 0, 0.4);
+	background: rgba(250, 255, 240, 0.7);
+	z-index: 1;
+}
+.noteactionbar a {
+    cursor: pointer;
+    font-weight: 600;
+}
+.note_edit:hover {
+    color: #55F !important;
+}
+.note_delete:hover {
+    color: #D00 !important;
+}
+
 /* new note clickable */
-#notebox_create {
+#note_create {
     align-self: stretch;
 }
 .notebox_create {
@@ -84,12 +110,9 @@
 	background: #fff;
 	box-shadow: 10px 10px 5px rgba(0, 0, 0, .2);
     padding: 15px;
-}
-#form_createnote {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-    height: 100%;
 }
 .editor_content {
 	height: 460px;
@@ -98,7 +121,7 @@
     height: 100%;
     resize: none;
 }
-#form_createnote button {
+#editor button {
 	width: 150px;
 	height: 40px;
 	margin: 0 auto;
@@ -106,7 +129,7 @@
 	border-radius: .5rem;
 	background: #fff;
 }
-#form_createnote button:hover {
+#editor button:hover {
 	border-color: #000;
 	background: #eee;
 }

@@ -6,15 +6,31 @@ $(function()
     loadNotes();
 });
 
-function showEditor(b)
+function showEditor(b, note)
 {
+    if (note)
+    {
+        var noteData = note.data("note");
+        $("#editor").data("note_id", noteData.id),
+        $(".editor_title input").val(noteData.title);
+        $(".editor_content textarea").val(noteData.content);
+        $("#editorbtn_post").css("display", "none");
+        $("#editorbtn_save").css("display", "inline-block");
+    }
+    else
+    {
+        $(".editor_title input").val("");
+        $(".editor_content textarea").val("");
+        $("#editorbtn_post").css("display", "inline-block");
+        $("#editorbtn_save").css("display", "none");
+    }
     if (b)
         $("#editorbox").css("visibility", "visible");
     else
         $("#editorbox").css("visibility", "hidden");
 }
 
-$(".notebox_create").click(function()
+$("#note_create").click(function()
 {
     showEditor(true);
 });
@@ -46,7 +62,7 @@ function loadNotes()
 				}
 				else
 				{
-                    $("#notebox_template").nextAll().remove();
+                    $("#note_template").nextAll().remove();
                     notes = response.notes;
                     notesIndex = notes.length - 1;
                     showNextNote();
@@ -60,18 +76,38 @@ function showNextNote()
 {
     if (notes == null || notesIndex < 0)
         return;
-    var note = notes[notesIndex];
+    var noteData = notes[notesIndex];
     notesIndex--;
-    createNotebox(note.title, note.content).appendTo("#notepanel");
+    createNotebox(noteData).appendTo("#notepanel");
     setTimeout(showNextNote, 50);
 }
  
  // create a Notebox from template
-function createNotebox(title, content)
+function createNotebox(noteData)
 {
-	var note = $("#notebox_template").clone().removeAttr('id');;
-	note.find(".note_title").html(_.escape(title));
-	note.find(".note_content").html(encodeNoteContent(content));
+	var note = $("#note_template").clone().removeAttr('id');
+    // attach data object
+    note.data("note", noteData);
+    // initialize action bar
+    note.find(".noteactionbar").hide();
+    note.hover(function()
+    {
+        note.find(".noteactionbar").stop().slideDown(200);
+    }, function()
+    {
+        note.find(".noteactionbar").stop().slideUp(200);
+    });
+    note.find(".note_edit").click(function()
+    {
+        editNote(note);
+    });
+    note.find(".note_delete").click(function()
+    {
+        deleteNote(note);
+    });
+    // fill text data
+	note.find(".note_title").html(_.escape(noteData.title));
+	note.find(".note_content").html(encodeNoteContent(noteData.content));
 	note.css("display", "block");
 	// move-in animation
 	note.find(".notebox").css(
@@ -95,17 +131,16 @@ function encodeNoteContent(content)
     return str;
 }
 
-// ajax submission
-$("#form_createnote").submit(function(e)
+// post new note
+$("#editorbtn_post").click(function()
 {
-	e.preventDefault(); // prevent the default submission
-	var form = $(this);
-	var url = form.attr('action');
 	$.ajax({
 			type: "POST",
-			url: url,
-			data: form.serialize() + "&" + $.param({
-                user_id : auth_user_id
+			url: "/createNote",
+			data: $.param({
+                user_id : auth_user_id,
+                title : $(".editor_title input").val(),
+                content : $(".editor_content textarea").val()
             }),
 			success: function(response)
 			{
@@ -121,3 +156,60 @@ $("#form_createnote").submit(function(e)
 			}
 	});
 });
+
+// edit note
+$("#editorbtn_save").click(function()
+{
+	$.ajax({
+			type: "POST",
+			url: "/updateNote",
+			data: $.param({
+                note_id : $("#editor").data("note_id"),
+                user_id : auth_user_id,
+                title : $(".editor_title input").val(),
+                content : $(".editor_content textarea").val()
+            }),
+			success: function(response)
+			{
+				if (!response.success)
+				{
+					alert('Post failed!');
+				}
+				else
+				{
+                    showEditor(false);
+                    loadNotes();
+				}
+			}
+	});
+});
+
+function editNote(note)
+{
+    showEditor(true, note);
+}
+
+function deleteNote(note)
+{
+    if (!confirm('Are you sure you want to delete this note?'))
+        return;
+	$.ajax({
+			type: "POST",
+			url: "/deleteNote",
+			data: $.param({
+                user_id : auth_user_id,
+                note_id : note.data("note").id
+            }),
+			success: function(response)
+			{
+				if (!response.success)
+				{
+					alert('Post failed!');
+				}
+				else
+				{
+                    note.remove();
+				}
+			}
+	});
+}
