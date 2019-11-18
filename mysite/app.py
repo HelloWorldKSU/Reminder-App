@@ -171,8 +171,10 @@ def route_removeNote():
 @app.route('/updateNote', methods = ['POST'])
 def route_updateNote():
     noteId = request.form['note_id']
-    newContent = request.form['new_content']
+    newTitle = request.form['title']
+    newContent = request.form['content']
     note = Note.query.filter_by(id=noteId).first()
+    note.title = newTitle
     note.content = newContent
     try:
         db.session.commit()
