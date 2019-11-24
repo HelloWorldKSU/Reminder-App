@@ -5,7 +5,7 @@ python:
 # command to install dependencies
 install:
 #  - pip install -r ./mysite/requirements.txt
-  - pip install flask
+  - pip install Flask
   - pip install SQLAlchemy 
   - pip install -U Flask-SQLAlchemy 
   - pip install Flask-WTF
