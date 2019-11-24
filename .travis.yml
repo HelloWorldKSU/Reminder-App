@@ -6,8 +6,6 @@ python:
 install:
 #  - pip install -r ./mysite/requirements.txt
   -pip install flask
-  -pip install SQLAlchemy
-  -pip install -U Flask-SQLAlchemy
 # command to run tests
 script:
   - pytest ./mysite
