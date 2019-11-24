@@ -1,4 +1,5 @@
 import sys
+print sys
 sys.path.append('~/mysite')
 import app
 def test_testing():
