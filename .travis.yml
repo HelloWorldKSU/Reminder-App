@@ -9,6 +9,7 @@ install:
   - pip install SQLAlchemy 
   - pip install -U Flask-SQLAlchemy 
   - pip install Flask-WTF
+  - pip install Flask-Login
   
 # command to run tests
 script:
