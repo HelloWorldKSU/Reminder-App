@@ -1,5 +1,4 @@
 import app
 def test_testing():
-  assert True
-  JSON = app.route_note()
-  print(JSON)
+  JSON = app._login(test,testpw).user_id
+  assert JSON == 0 
