@@ -1,4 +1,5 @@
 import app
+import json
 def test_testing():
-  JSON = app._login("test","testpw").user_id
-  assert JSON == 0 
+  JSON = _login("test","testpw")
+  //assert JSON == 0
