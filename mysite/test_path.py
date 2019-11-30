@@ -1,4 +1,4 @@
-from app import *
+from app import _login
 import json
 def test_testing():
   JSON = _login("test","testpw")
