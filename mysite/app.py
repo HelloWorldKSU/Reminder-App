@@ -59,9 +59,9 @@ class Note(db.Model):
     user_id  = db.Column(db.Integer)
     title = db.Column(db.String(50))
     content  = db.Column(db.String(1000))
-    date_due = db.Column(db.DateTime, default = datetime.datetime.utcnow())
-    date_created = db.Column(db.DateTime, default = datetime.datetime.utcnow())
-    date_modified = db.Column(db.DateTime, onupdate = datetime.datetime.utcnow())
+    date_due = db.Column(db.DateTime, default = datetime.datetime.utcnow)
+    date_created = db.Column(db.DateTime, default = datetime.datetime.utcnow)
+    date_modified = db.Column(db.DateTime, onupdate = datetime.datetime.utcnow)
     color = db.Column(db.Integer)
 
     def __init__(self, user_id_, title_, content_, date_due_, color_):

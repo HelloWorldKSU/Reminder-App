@@ -47,9 +47,6 @@ function initDateSelects()
 function updateEditorDayList(year, month)
 {
     var days = new Date(year, month, 0).getDate();
-    console.log(year + " " + month);
-    console.log(new Date(year, month, 0));
-    console.log(days);
     var day = $('#editor_day').val();
     if (day == null)
         day = 1;
@@ -79,8 +76,6 @@ function setEditorDate(dateStr)
 function getEditorDateUTC()
 {
     var date = new Date($('#editor_year').val(), parseInt($('#editor_month').val()) - 1, $('#editor_day').val(), $('#editor_hour').val(), $('#editor_minute').val(), 0);
-    console.log(date);
-    //return $('#editor_year').val() + "-" + $('#editor_month').val() + "-" + $('#editor_day').val() + " " + $('#editor_hour').val() + ":" + $('#editor_minute').val() + ":00";
     return date.toISOString();
 }
 
