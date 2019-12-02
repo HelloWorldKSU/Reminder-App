@@ -17,17 +17,17 @@ login = LoginManager(app)
 #THIS IS FOR THE NOTE_APP DB
 SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{username}:{password}@{hostname}/{databasename}".format(
     # local database
-    username="root",
-    password="",
-    hostname="localhost",
-    port="3306",
-    databasename="reminder_app",
+    # username="root",
+    # password="",
+    # hostname="localhost",
+    # port="3306",
+    # databasename="reminder_app",
     
     # db on PythonAnywhere
-    # username="helloworldksu",
-    # password="cryptonomicon",
-    # hostname="helloworldksu.mysql.pythonanywhere-services.com",
-    # databasename="helloworldksu$note_app",
+    username="helloworldksu",
+    password="cryptonomicon",
+    hostname="helloworldksu.mysql.pythonanywhere-services.com",
+    databasename="helloworldksu$note_app",
 )
 app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY', 'you-will-never-guess')
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
