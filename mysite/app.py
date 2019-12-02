@@ -5,6 +5,9 @@ from sqlalchemy import exc
 from forms import LoginForm
 from flask_login import current_user, login_user, UserMixin, LoginManager
 import pymysql
+import datetime
+
+DTFormat = "%Y-%m-%dT%H:%M:%S.%fZ"
 
 #from werkzeug.urls import url_parse
 
@@ -14,17 +17,17 @@ login = LoginManager(app)
 #THIS IS FOR THE NOTE_APP DB
 SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{username}:{password}@{hostname}/{databasename}".format(
     # local database
-    # username="root",
-    # password="",
-    # hostname="localhost",
-    # port="3306",
-    # databasename="reminder_app",
+    username="root",
+    password="",
+    hostname="localhost",
+    port="3306",
+    databasename="reminder_app",
     
     # db on PythonAnywhere
-    username="helloworldksu",
-    password="cryptonomicon",
-    hostname="helloworldksu.mysql.pythonanywhere-services.com",
-    databasename="helloworldksu$note_app",
+    # username="helloworldksu",
+    # password="cryptonomicon",
+    # hostname="helloworldksu.mysql.pythonanywhere-services.com",
+    # databasename="helloworldksu$note_app",
 )
 app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY', 'you-will-never-guess')
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
@@ -55,19 +58,19 @@ class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id  = db.Column(db.Integer)
     title = db.Column(db.String(50))
-    date_due_d = db.Column(db.Date)
-    date_due_t = db.Column(db.Time)
-    date_created_d = db.Column(db.Date)
-    date_created_t = db.Column(db.Time)
-    date_modified_d = db.Column(db.Date)
-    date_modified_t = db.Column(db.Time)
     content  = db.Column(db.String(1000))
+    date_due = db.Column(db.DateTime, default = datetime.datetime.utcnow())
+    date_created = db.Column(db.DateTime, default = datetime.datetime.utcnow())
+    date_modified = db.Column(db.DateTime, onupdate = datetime.datetime.utcnow())
+    color = db.Column(db.Integer)
 
-    def __init__(self, user_id_, title_, content_):
+    def __init__(self, user_id_, title_, content_, date_due_, color_):
         self.id = None
         self.user_id = user_id_
         self.title = title_
         self.content = content_
+        self.date_due = date_due_
+        self.color = color_
     
     @property
     def serialize(self):
@@ -75,7 +78,11 @@ class Note(db.Model):
            'id' : self.id,
            'user_id' : self.user_id,
            'title' : self.title,
-           'content' : self.content
+           'content' : self.content,
+           'date_due' : self.date_due,
+           'date_created' : self.date_created,
+           'date_modified' : self.date_modified,
+           'color' : self.color
        }
     @property
     def serialize_many2many(self):
@@ -147,7 +154,8 @@ def route_createNote():
     title = request.form['title']
     content = request.form['content']
     user_id = request.form['user_id']
-    newNote = Note(user_id, title, content)
+    color = request.form['color'] if request.form['color'] else None
+    newNote = Note(user_id, title, content, datetime.datetime.strptime(request.form['date_due'], DTFormat), color)
     db.session.add(newNote)
     try:
         db.session.commit()
@@ -171,11 +179,12 @@ def route_removeNote():
 @app.route('/updateNote', methods = ['POST'])
 def route_updateNote():
     noteId = request.form['note_id']
-    newTitle = request.form['title']
-    newContent = request.form['content']
     note = Note.query.filter_by(id=noteId).first()
-    note.title = newTitle
-    note.content = newContent
+    note.title = request.form['title']
+    note.content = request.form['content']
+    note.date_due = datetime.datetime.strptime(request.form['date_due'], DTFormat)
+    note.color = request.form['color'] if request.form['color'] else None
+    print("[", note.color, "]")
     try:
         db.session.commit()
     except exc.SQLAlchemyError as e:

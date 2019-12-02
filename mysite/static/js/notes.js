@@ -1,10 +1,135 @@
 var notes;
 var notesIndex;
+var Months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+var Colors = [0x000000, 0x808080, 0x804040, 0xFF0000, 0xFF8000, 0xFFFF00, 0x008000, 0x00A2E8, 0x4050CC, 0xA048A0];
 
 $(function()
 {
+    initDateSelects();
+    initColors();
     loadNotes();
 });
+
+function initDateSelects()
+{
+    Months.forEach(function(val, i, array)
+    {
+        $('#editor_month').append("<option value=\"" + (i+1) + "\">" + val + "</option>");
+    });
+    for (var i = 2050; i >= 2000; i--)
+        $('#editor_year').append("<option value=\"" + i + "\">" + i + "</option>");
+    for (var i = 0; i <= 23; i++)
+    {
+        var str;
+        if (i % 12 == 0)
+            str = 12;
+        else
+            str = i % 12;
+        if (i < 12)
+            str += " AM";
+        else
+            str += " PM";
+        $('#editor_hour').append("<option value=\"" + i + "\">" + str + "</option>");
+    }
+    for (var i = 0; i <= 59; i+=5)
+        $('#editor_minute').append("<option value=\"" + i + "\">" + i + "</option>");
+    $('#editor_year').change(function(e)
+    {
+        updateEditorDayList($(e.target).val(), $('#editor_month').val());
+    });
+    $('#editor_month').change(function(e)
+    {
+        updateEditorDayList($('#editor_year').val(), $(e.target).val());
+    });
+    setEditorDate(null);
+}
+
+function updateEditorDayList(year, month)
+{
+    var days = new Date(year, month, 0).getDate();
+    console.log(year + " " + month);
+    console.log(new Date(year, month, 0));
+    console.log(days);
+    var day = $('#editor_day').val();
+    if (day == null)
+        day = 1;
+    $('#editor_day').empty();
+    for (var i = 1; i <= days; i++)
+        $('#editor_day').append("<option value=\"" + i + "\">" + i + "</option>");
+    $('#editor_day').val(day);
+    if ($('#editor_day').val() == null)
+        $('#editor_day').val(1);
+}
+
+function setEditorDate(dateStr)
+{
+    var date;
+    if (dateStr == null)
+        date = new Date();
+    else
+        date = new Date(dateStr);
+    $('#editor_year').val(date.getFullYear());
+    $('#editor_month').val(date.getMonth() + 1);
+    updateEditorDayList(date.getFullYear(), date.getMonth() + 1);
+    $('#editor_day').val(date.getDate());
+    $('#editor_hour').val(date.getHours());
+    $('#editor_minute').val(Math.floor(date.getMinutes() / 5) * 5);
+}
+
+function getEditorDateUTC()
+{
+    var date = new Date($('#editor_year').val(), parseInt($('#editor_month').val()) - 1, $('#editor_day').val(), $('#editor_hour').val(), $('#editor_minute').val(), 0);
+    console.log(date);
+    //return $('#editor_year').val() + "-" + $('#editor_month').val() + "-" + $('#editor_day').val() + " " + $('#editor_hour').val() + ":" + $('#editor_minute').val() + ":00";
+    return date.toISOString();
+}
+
+function initColors()
+{
+    Colors.forEach(function(val, i, array)
+    {
+        $("<div class=\"editor_coloroption\" data-value=\"" + val + "\"></div>").appendTo('#editor_color')
+            .data("value", val)
+            .css("background", getHTMLColor(val))
+            .click(function()
+            {
+                if (getEditorColor() == val)
+                    clearEditorColor();
+                else
+                    setEditorColor(val);
+            });
+    });
+}
+
+function getHTMLColor(color)
+{
+    if (color == null)
+        return null;
+    return "#"+("000000" + color.toString(16)).substr(-6);
+}
+
+function clearEditorColor()
+{
+    $(".editor_coloroption").removeClass("editor_selectedcolor");
+    $("#editor_color").data("value", null);
+}
+
+function setEditorColor(color)
+{
+    $(".editor_coloroption").each(function()
+    {
+        if ($(this).data("value") == color)
+            $(this).addClass("editor_selectedcolor");
+        else
+            $(this).removeClass("editor_selectedcolor");
+    });
+    $("#editor_color").data("value", color);
+}
+
+function getEditorColor()
+{
+    return $("#editor_color").data("value");
+}
 
 function showEditor(b, note)
 {
@@ -12,15 +137,19 @@ function showEditor(b, note)
     {
         var noteData = note.data("note");
         $("#editor").data("note_id", noteData.id),
-        $(".editor_title input").val(noteData.title);
-        $(".editor_content textarea").val(noteData.content);
+        $("#editor_title input").val(noteData.title);
+        setEditorDate(noteData.date_due);
+        setEditorColor(noteData.color);
+        $("#editor_content textarea").val(noteData.content);
         $("#editorbtn_post").css("display", "none");
         $("#editorbtn_save").css("display", "inline-block");
     }
     else
     {
-        $(".editor_title input").val("");
-        $(".editor_content textarea").val("");
+        $("#editor_title input").val("");
+        setEditorDate();
+        setEditorColor(null);
+        $("#editor_content textarea").val("");
         $("#editorbtn_post").css("display", "inline-block");
         $("#editorbtn_save").css("display", "none");
     }
@@ -58,7 +187,7 @@ function loadNotes()
 			{
 				if (!response.success)
 				{
-					//alert('failed!');
+					//alert("failed!");
 				}
 				else
 				{
@@ -85,17 +214,17 @@ function showNextNote()
  // create a Notebox from template
 function createNotebox(noteData)
 {
-	var note = $("#note_template").clone().removeAttr('id');
+	var note = $("#note_template").clone().removeAttr("id");
     // attach data object
     note.data("note", noteData);
     // initialize action bar
-    note.find(".noteactionbar").hide();
+    note.find(".notemenu").hide();
     note.hover(function()
     {
-        note.find(".noteactionbar").stop().slideDown(200);
+        note.find(".notemenu").stop().fadeIn(200);
     }, function()
     {
-        note.find(".noteactionbar").stop().slideUp(200);
+        note.find(".notemenu").stop().fadeOut(200);
     });
     note.find(".note_edit").click(function()
     {
@@ -107,8 +236,46 @@ function createNotebox(noteData)
     });
     // fill text data
 	note.find(".note_title").html(_.escape(noteData.title));
+    var date = new Date(noteData.date_due);
+	note.find(".note_datedue").html(date.toLocaleDateString("en-US", 
+    {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    }));
+    date = new Date(noteData.date_created);
+	note.find(".note_datecreated").html("Created on " + date.toLocaleDateString("en-US", 
+    {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    }));
+    if (noteData.date_modified != null)
+    {
+        date = new Date(noteData.date_modified);
+        note.find(".note_datemodified").html("Last modified on " + date.toLocaleDateString("en-US", 
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }));
+    }
+    else
+    {
+        note.find(".note_datemodified").empty();
+    }
 	note.find(".note_content").html(encodeNoteContent(noteData.content));
 	note.css("display", "block");
+    if (noteData.color != null)
+        note.find(".notebox").css("border-color", getHTMLColor(noteData.color));
+    else
+        note.find(".notebox").css("border-color", "");
 	// move-in animation
 	note.find(".notebox").css(
 	{
@@ -139,14 +306,16 @@ $("#editorbtn_post").click(function()
 			url: "/createNote",
 			data: $.param({
                 user_id : auth_user_id,
-                title : $(".editor_title input").val(),
-                content : $(".editor_content textarea").val()
+                title : $("#editor_title input").val(),
+                content : $("#editor_content textarea").val(),
+                date_due : getEditorDateUTC(),
+                color : getEditorColor()
             }),
 			success: function(response)
 			{
 				if (!response.success)
 				{
-					alert('Post failed!');
+					alert("Post failed!");
 				}
 				else
 				{
@@ -166,14 +335,16 @@ $("#editorbtn_save").click(function()
 			data: $.param({
                 note_id : $("#editor").data("note_id"),
                 user_id : auth_user_id,
-                title : $(".editor_title input").val(),
-                content : $(".editor_content textarea").val()
+                title : $("#editor_title input").val(),
+                content : $("#editor_content textarea").val(),
+                date_due : getEditorDateUTC(),
+                color : getEditorColor()
             }),
 			success: function(response)
 			{
 				if (!response.success)
 				{
-					alert('Post failed!');
+					alert("Post failed!");
 				}
 				else
 				{
@@ -191,7 +362,7 @@ function editNote(note)
 
 function deleteNote(note)
 {
-    if (!confirm('Are you sure you want to delete this note?'))
+    if (!confirm("Are you sure you want to delete this note?"))
         return;
 	$.ajax({
 			type: "POST",
@@ -204,7 +375,7 @@ function deleteNote(note)
 			{
 				if (!response.success)
 				{
-					alert('Post failed!');
+					alert("Post failed!");
 				}
 				else
 				{
