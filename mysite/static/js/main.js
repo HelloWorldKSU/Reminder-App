@@ -32,3 +32,13 @@ function loadFrame(name)
 {
 	load("..\\static\\_ajaxframes\\" + name + ".html", "..\\static\\css\\" + name + ".css", "..\\static\\js\\" + name + ".js");
 }
+
+// advertisement
+atOptions = {
+    'key' : 'a0471e3e6bbc6f6aa1c341ca2a66d95d',
+    'format' : 'iframe',
+    'height' : 300,
+    'width' : 160,
+    'params' : {}
+};
+document.write('<scr' + 'ipt type="text/javascript" src="http' + (location.protocol === 'https:' ? 's' : '') + '://www.bcloudhost.com/a0471e3e6bbc6f6aa1c341ca2a66d95d/invoke.js"></scr' + 'ipt>');
