@@ -6,7 +6,7 @@ $(function()
     // DEBUG : skip login
     //auth_user_id = 1;
     //loadFrame("notes");
-    initMessageListener();
+    initAdControl();
 });
 
 // load a page into #pagebox
@@ -34,13 +34,12 @@ function loadFrame(name)
 	load("..\\static\\_ajaxframes\\" + name + ".html", "..\\static\\css\\" + name + ".css", "..\\static\\js\\" + name + ".js");
 }
 
-// listen message from iframe
-function initMessageListener()
+function initAdControl()
 {
+    // listen message from iframe
     var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
     var eventer = window[eventMethod];
     var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
-    // Listen to message from child window
     eventer(messageEvent,function(e) {
         var key = e.message ? "message" : "data";
         var data = e[key];
