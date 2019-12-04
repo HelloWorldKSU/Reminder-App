@@ -92,6 +92,11 @@ class Note(db.Model):
 def serveIndexHtml():
     return render_template('index.html')
 
+#route: ads
+@app.route('/ads')
+def route_ads():
+    return render_template('ads.html')
+
 #route: debug (both GET and POST will work)
 @app.route('/debug', methods = ['GET', 'POST'])
 def route_debug():

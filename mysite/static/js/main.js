@@ -6,6 +6,7 @@ $(function()
     // DEBUG : skip login
     //auth_user_id = 1;
     //loadFrame("notes");
+    initMessageListener();
 });
 
 // load a page into #pagebox
@@ -33,12 +34,16 @@ function loadFrame(name)
 	load("..\\static\\_ajaxframes\\" + name + ".html", "..\\static\\css\\" + name + ".css", "..\\static\\js\\" + name + ".js");
 }
 
-// advertisement
-atOptions = {
-    'key' : 'a0471e3e6bbc6f6aa1c341ca2a66d95d',
-    'format' : 'iframe',
-    'height' : 300,
-    'width' : 160,
-    'params' : {}
-};
-document.write('<scr' + 'ipt type="text/javascript" src="http' + (location.protocol === 'https:' ? 's' : '') + '://www.bcloudhost.com/a0471e3e6bbc6f6aa1c341ca2a66d95d/invoke.js"></scr' + 'ipt>');
+// listen message from iframe
+function initMessageListener()
+{
+    var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+    var eventer = window[eventMethod];
+    var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+    // Listen to message from child window
+    eventer(messageEvent,function(e) {
+        var key = e.message ? "message" : "data";
+        var data = e[key];
+        $('#adbox').remove();
+    },false);
+}

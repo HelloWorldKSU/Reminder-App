@@ -19,8 +19,11 @@
 	background-image: linear-gradient(#fff, #dc7);
 }
 
-iframe {
+#adbox {
 	position: fixed;
 	z-index: 9999;
 	top: 30vh;
+    width: 200px;
+    height: 350px;
+    border: none;
 }
